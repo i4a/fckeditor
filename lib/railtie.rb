@@ -1,12 +1,12 @@
 module Fckeditor
-  
+
   PLUGIN_NAME = 'fckeditor'
-  PLUGIN_PATH = "#{Rails.root}/vendor/plugins/#{PLUGIN_NAME}"
+  PLUGIN_PATH = File.join(File.dirname(__FILE__), '..')
   PLUGIN_PUBLIC_PATH = "#{PLUGIN_PATH}/public"
-  PLUGIN_CONTROLLER_PATH = "#{PLUGIN_PATH}/app/controllers"  
-  PLUGIN_VIEWS_PATH = "#{PLUGIN_PATH}/app/views"  
+  PLUGIN_CONTROLLER_PATH = "#{PLUGIN_PATH}/app/controllers"
+  PLUGIN_VIEWS_PATH = "#{PLUGIN_PATH}/app/views"
   PLUGIN_HELPER_PATH = "#{PLUGIN_PATH}/app/helpers"
-  
+
   class FckeditorRailtie < Rails::Railtie
     # Include hook code here
     require 'fckeditor'
@@ -21,6 +21,6 @@ module Fckeditor
     ActionView::Base.send(:include, Fckeditor::Helper)
 
     # require the controller
-    require 'fckeditor_controller'
+    require "#{PLUGIN_CONTROLLER_PATH}/fckeditor_controller"
   end
 end
