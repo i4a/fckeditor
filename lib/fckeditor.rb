@@ -1,6 +1,10 @@
 # Fckeditor
 module Fckeditor
   module Helper
+    def fckeditor_asset_path(soruce = '')
+      asset_path("fckeditor/#{soruce}")
+    end
+
     def fckeditor_textarea(object, field, options = {})
       var = instance_variable_get("@#{object}")
       if var
@@ -28,17 +32,14 @@ module Fckeditor
         inputs = "<textarea id='#{id}' #{cols} #{rows} name='#{object}[#{field}]'>#{value}</textarea>\n"
       end
 
-      js_path   = asset_path('')
-      base_path = asset_path('fckeditor/')
-
       return inputs.html_safe <<
         javascript_tag(
-        <<-JAVASCRIPT
+          <<-JAVASCRIPT
           var oFCKeditor = new FCKeditor('#{id}', '#{width}', '#{height}', '#{toolbarSet}');
-          oFCKeditor.BasePath = "#{base_path}";
-          oFCKeditor.Config['CustomConfigurationsPath'] = '= #{js_path}/fckcustom.js';
+          oFCKeditor.BasePath = "#{fckeditor_asset_path}";
+          oFCKeditor.Config['CustomConfigurationsPath'] = "#{fckeditor_asset_path('fckcustom.js')}";
           oFCKeditor.ReplaceTextarea();
-        JAVASCRIPT
+          JAVASCRIPT
         )
     end
 
@@ -74,11 +75,12 @@ module Fckeditor
 
     def fckeditor_before_js(object, field)
       id = fckeditor_element_id(object, field)
-      "var oEditor = FCKeditorAPI.GetInstance('"+id+"'); document.getElementById('"+id+"_hidden').value = oEditor.GetXHTML();"
+      <<-JAVASCRIPT
+      var oEditor = FCKeditorAPI.GetInstance("#{id}");
+      document.getElementById("#{id}_hidden").value = oEditor.GetXHTML();
+      JAVASCRIPT
     end
   end
-
-  ActionView::Base.send(:prepend, ActionViewMods)
 end
 
 require 'railtie' if defined?(Rails)
